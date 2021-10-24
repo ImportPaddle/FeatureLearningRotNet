@@ -26,7 +26,7 @@ class GlobalAvgPool(nn.Layer):
 
     def forward(self, feat):
         assert (feat.shape[2] == feat.shape[3])
-        feat_avg = reshape(nn.AvgPool2D(feat.shape[2],exclusive=False,)(feat), (-1, feat.shape[1]))
+        feat_avg = reshape(nn.AvgPool2D(feat.shape[2],exclusive=False)(feat), (-1, feat.shape[1]))
         return feat_avg
 
 
