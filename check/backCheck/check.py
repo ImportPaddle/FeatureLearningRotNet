@@ -124,21 +124,21 @@ def main():
     # torch log
     reprod_log_1.add("model_loss1", loss_torch[0])
     reprod_log_1.add("model_loss2", loss_torch[1])
-    reprod_log_1.save("net_pytorch.npy")
+    reprod_log_1.save("back_pytorch.npy")
     # paddle log
     reprod_log_2.add("model_loss1", loss_paddle[0])
     reprod_log_2.add("model_loss2", loss_paddle[1])
-    reprod_log_2.save("net_paddle.npy")
+    reprod_log_2.save("back_paddle.npy")
 
 
 def check():
     diff_helper = ReprodDiffHelper()
-    info1 = diff_helper.load_info("./net_pytorch.npy")
-    info2 = diff_helper.load_info("./net_paddle.npy")
+    info1 = diff_helper.load_info("./back_pytorch.npy")
+    info2 = diff_helper.load_info("./back_paddle.npy")
 
     diff_helper.compare_info(info1, info2)
     diff_helper.report(
-        diff_method="mean", diff_threshold=1e-6, path="./diff-model.txt")
+        diff_method="mean", diff_threshold=1e-6, path="./diff-back.txt")
 
 
 if __name__ == "__main__":
