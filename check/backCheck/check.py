@@ -17,7 +17,7 @@ from paddleRotNet.architectures import NonLinearClassifier as cla
 
 import torch
 import paddle
-SEED=100
+SEED=1000
 torch.manual_seed(SEED)
 paddle.seed(SEED)
 np.random.seed(SEED)
@@ -82,7 +82,7 @@ def main():
                                       momentum=optim_params['momentum'],
                                       nesterov=optim_params['nesterov'] if ('nesterov' in optim_params) else False,
                                       weight_decay=optim_params['weight_decay'])
-    optim_cla_paddle = paddle.optimizer.Momentum(parameters=model_ext_paddle.parameters(),
+    optim_cla_paddle = paddle.optimizer.Momentum(parameters=model_cla_paddle.parameters(),
                                                  learning_rate=optim_params['lr'],
                                                  momentum=optim_params['momentum'],
                                                  use_nesterov=optim_params['nesterov'] if (
