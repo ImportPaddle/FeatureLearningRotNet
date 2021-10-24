@@ -1,0 +1,3 @@
+[2021/10/24 18:57:02] root INFO: top1: 
+[2021/10/24 18:57:02] root INFO: 	mean diff: check passed: True, value: 0.00600433349609375
+[2021/10/24 18:57:02] root INFO: diff check passed

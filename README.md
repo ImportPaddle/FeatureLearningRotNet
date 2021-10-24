@@ -33,13 +33,13 @@ diff: 0.0
 
 
 4.反向对齐 yes
-
-运行check/forwordCheck/acc.py
-
-
+运行check/forwordCheck/check.py
+diff
+loss1:4.76837158203125e-07
+loss2:2.384185791015625e-07
 
 5.训练对齐
-
+运行check/trainCheck/check.py
 
 
 问题1: 

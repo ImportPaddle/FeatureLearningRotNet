@@ -117,7 +117,7 @@ class NetworkInNetwork(nn.Module):
                 order as in `out_feat_keys`. If a single output feature was
                 asked then `out_feats` is that output feature (and not a list).
         """
-        print(x.shape)
+        # print(x.shape)
         out_feat_keys, max_out_feat = self._parse_out_keys_arg(out_feat_keys)
         out_feats = [None] * len(out_feat_keys)
 
