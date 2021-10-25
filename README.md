@@ -1,3 +1,6 @@
+训练：
+运行sh run_cifar10_based_unsupervised_experiments.sh
+
 1.模型对齐 yes
 
 Torch -> Paddle 
@@ -43,7 +46,7 @@ loss2:2.384185791015625e-07
 
 
 问题1: 
-
+已接近
 
 
 torch.optimizer.SGD(parameters=parameters,lr=learning_rate,
@@ -85,9 +88,3 @@ paddle.optimizer.Momentum(parameters=parameters,lr=learning_rate,
 ​                weight_decay=optim_opts['weight_decay'])
 
 
-
-
-
-问题2:
-
-torch 中num_batches_tracked 参数未设置，导致模型未对齐

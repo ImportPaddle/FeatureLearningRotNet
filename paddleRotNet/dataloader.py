@@ -14,6 +14,8 @@ from paddle.vision import transforms, Cifar10, datasets
 from pdb import set_trace as breakpoint
 from paddle.io import DataLoader
 
+import warnings
+warnings.filterwarnings('ignore')
 BATCH_SIZE = 8
 _CIFAR_DATASET_DIR = './datasets/CIFAR'
 
@@ -168,9 +170,10 @@ class CifarDataLoader(object):
             # plus the label of the rotation, i.e., 0 for 0 degrees rotation,
             # 1 for 90 degrees, 2 for 180 degrees, and 3 for 270 degrees.
             def _load_function(batch):
+                imgs=batch[0]
                 rotated_imgs = []
                 rotation_labels = []
-                for img in batch:
+                for img in imgs:
                     rotated_imgs.append([
                         self.transform(img),
                         self.transform(rotate_img(img, 90).copy()),
@@ -182,8 +185,11 @@ class CifarDataLoader(object):
 
             def _collate_fun(batch):
                 batch = default_collate_fn(batch)
-                batch = _load_function(batch[0])
+                # print(batch[1])
+                assert(len(batch)==2)
+                batch = _load_function(batch)
                 assert (len(batch) == 2)
+                # print(batch[1])
                 batch_size, rotations, channels, height, width = batch[0].shape
                 batch[0] = batch[0].reshape([batch_size * rotations, channels, height, width])
                 batch[1] = batch[1].reshape([batch_size * rotations])
@@ -191,19 +197,45 @@ class CifarDataLoader(object):
         else:  # supervised mode
             # if in supervised mode define a loader function that given the
             # index of an image it returns the image and its categorical label
-            def _load_function(idx):
-                idx = idx % len(self.dataset)
-                img, categorical_label = self.dataset[idx]
-                img = self.transform(img)
-                return img, categorical_label
+            # def _load_function(batch):
+                
+            #     img, categorical_label = batch[0],batch[1]
 
-            _collate_fun = default_collate_fn
-
+            #     img = self.transform(img)
+            
+            #     return [img, categorical_label]
+                
+            def _load_function(batch):
+                rotated_imgs = []
+                categorical_label = []
+                # print(batch[0][0])
+                # print('1.1')
+                for img, label in zip(batch[0], batch[1]):
+                    # print('1.1.1')
+                    # print(type(img))
+                    img=[self.transform(img)]
+                    # print('1.1.2')
+                    rotated_imgs.extend(img)
+                    
+                    categorical_label.extend([label])
+                # print(type(rotated_imgs))
+                # print(rotated_imgs[0])
+                # print('1.2')
+                return [paddle.to_tensor(rotated_imgs), paddle.to_tensor(categorical_label)]
+            def _collate_fun(batch):
+                batch = default_collate_fn(batch)
+                # print('----1')
+                batch = _load_function(batch)
+                # print('----2')
+                # print('batch[0].shape',batch[0].shape)
+                # print('batch[1].shape',batch[1].shape)
+                return batch
+            
         data_loader = DataLoader(self.dataset,
                                  batch_size=self.batch_size,
                                  shuffle=self.shuffle,
                                  num_workers=self.num_workers,
-                                 drop_last=True,
+                                 drop_last=False,
                                  collate_fn=_collate_fun)
 
         return data_loader
@@ -219,19 +251,17 @@ if __name__ == '__main__':
     from matplotlib import pyplot as plt
 
     dataset = CifarDataset(dataset_name='cifar10', split='train', random_sized_crop=False)
-    dataloader = CifarDataLoader(dataset, batch_size=8, unsupervised=True)
-
-    for b in dataloader(0):
-        data, label = b
-        # data = data.astype('float32')
-        break
-    inv_transform = dataloader.inv_transform
-    for i, img in enumerate(data):
-        # print(img)
-        plt.subplot(data.shape[0] / 4, 4, i + 1)
-        # fig = plt.imshow(img)
-        fig = plt.imshow(inv_transform(img))
-        fig.axes.get_xaxis().set_visible(False)
-        fig.axes.get_yaxis().set_visible(False)
-
+    data_loader = CifarDataLoader(dataset, batch_size=128,num_workers=1,shuffle=True, unsupervised=False)
+    epoch=0
+    from tqdm import tqdm
+    for idx, batch in enumerate(tqdm(data_loader(epoch))):
+        x,label=batch
+        # print(x.shape)
+        # print(label)
+        # print(label.shape)
+        # print(batch)
+        # break
+        pass
+    epoch+=1
     plt.show()
+

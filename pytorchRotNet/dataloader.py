@@ -15,13 +15,12 @@ import errno
 import numpy as np
 import sys
 import csv
-
+import warnings
+warnings.filterwarnings('ignore')
 from pdb import set_trace as breakpoint
 
 # Set the paths of the datasets here.
 _CIFAR_DATASET_DIR = './datasets/CIFAR'
-_IMAGENET_DATASET_DIR = './datasets/IMAGENET/ILSVRC2012'
-_PLACES205_DATASET_DIR = './datasets/Places205'
 
 
 def buildLabelIndex(labels):
@@ -264,6 +263,7 @@ class DataLoader(object):
             def _load_function(idx):
                 idx = idx % len(self.dataset)
                 img0, _ = self.dataset[idx]
+                # print(img0)
                 rotated_imgs = [
                     self.transform(img0),
                     self.transform(rotate_img(img0,  90).copy()),
@@ -274,6 +274,7 @@ class DataLoader(object):
                 return torch.stack(rotated_imgs, dim=0), rotation_labels
             def _collate_fun(batch):
                 batch = default_collate(batch)
+                # print(batch[0][0])
                 assert(len(batch)==2)
                 batch_size, rotations, channels, height, width = batch[0].size()
                 batch[0] = batch[0].view([batch_size*rotations, channels, height, width])
@@ -303,20 +304,57 @@ class DataLoader(object):
         return self.epoch_size / self.batch_size
 
 if __name__ == '__main__':
-    from matplotlib import pyplot as plt
 
-    dataset = GenericDataset('imagenet','train', random_sized_crop=True)
-    dataloader = DataLoader(dataset, batch_size=8, unsupervised=True)
+    batch_size   = 128
 
-    for b in dataloader(0):
-        data, label = b
-        break
+    data_train_opt = {} 
+    data_train_opt['batch_size'] = batch_size
+    data_train_opt['unsupervised'] = True
+    data_train_opt['epoch_size'] = None
+    data_train_opt['random_sized_crop'] = False
+    data_train_opt['dataset_name'] = 'cifar10'
+    data_train_opt['split'] = 'train'
 
-    inv_transform = dataloader.inv_transform
-    for i in range(data.size(0)):
-        plt.subplot(data.size(0)/4,4,i+1)
-        fig=plt.imshow(inv_transform(data[i]))
-        fig.axes.get_xaxis().set_visible(False)
-        fig.axes.get_yaxis().set_visible(False)
+    data_test_opt = {}
+    data_test_opt['batch_size'] = batch_size
+    data_test_opt['unsupervised'] = True
+    data_test_opt['epoch_size'] = None
+    data_test_opt['random_sized_crop'] = False
+    data_test_opt['dataset_name'] = 'cifar10'
+    data_test_opt['split'] = 'test'
+    num_imgs_per_cat = data_train_opt['num_imgs_per_cat'] if ('num_imgs_per_cat' in data_train_opt) else None
 
-    plt.show()
+    dataset_train = GenericDataset(
+    dataset_name=data_train_opt['dataset_name'],
+    split=data_train_opt['split'],
+    random_sized_crop=data_train_opt['random_sized_crop'],
+    num_imgs_per_cat=num_imgs_per_cat)
+    dataset_test = GenericDataset(
+        dataset_name=data_test_opt['dataset_name'],
+        split=data_test_opt['split'],
+        random_sized_crop=data_test_opt['random_sized_crop'])
+
+    dloader_train = DataLoader(
+        dataset=dataset_train,
+        batch_size=data_train_opt['batch_size'],
+        unsupervised=data_train_opt['unsupervised'],
+        epoch_size=data_train_opt['epoch_size'],
+        num_workers=4,
+        shuffle=True)
+
+    dloader_test = DataLoader(
+        dataset=dataset_test,
+        batch_size=data_test_opt['batch_size'],
+        unsupervised=data_test_opt['unsupervised'],
+        epoch_size=data_test_opt['epoch_size'],
+        num_workers=4,
+        shuffle=False)
+    epoch=0
+    from tqdm import tqdm
+    for idx, batch in enumerate(tqdm(dloader_train(epoch))):
+        x,label=batch
+
+        # print(x.shape)
+        # print(label)
+        pass
+    epoch+=1

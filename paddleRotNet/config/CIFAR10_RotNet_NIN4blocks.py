@@ -20,7 +20,7 @@ data_test_opt['split'] = 'test'
 
 config['data_train_opt'] = data_train_opt
 config['data_test_opt']  = data_test_opt
-config['max_num_epochs'] = 200
+config['max_num_epochs'] = 400
 
 net_opt = {}
 net_opt['num_classes'] = 4

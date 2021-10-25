@@ -60,12 +60,14 @@ class FeatureClassificationModel(Algorithm):
         # self.tensors['labels'] = paddle.to_tensor(dtype='int64')
 
     def train_step(self, batch):
+        # print(batch[0].shape)
         return self.process_batch(batch, do_train=True)
 
     def evaluation_step(self, batch):
         return self.process_batch(batch, do_train=False)
 
     def process_batch(self, batch, do_train=True):
+        # print('0---------')
         # *************** LOAD BATCH (AND MOVE IT TO GPU) ********
         start = time.time()
         # self.tensors['dataX'].resize_(batch[0].size()).copy_(batch[0])
@@ -101,7 +103,8 @@ class FeatureClassificationModel(Algorithm):
 
         # ************ FORWARD PROPAGATION ***********************
         # print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh', )
-        feat_var = self.networks['feat_extractor'](paddle.transpose(dataX_var.astype('float32'), perm=[0, 3, 1, 2]), out_feat_keys=out_feat_keys)
+        # print(dataX_var)
+        feat_var = self.networks['feat_extractor'](dataX_var, out_feat_keys=out_feat_keys)
         if not finetune_feat_extractor:
             if isinstance(feat_var, (list, tuple)):
                 for i in range(len(feat_var)):
@@ -124,7 +127,7 @@ class FeatureClassificationModel(Algorithm):
             loss_total = self.criterions['loss'](pred_var, labels_var)
             record['prec1'] = accuracy(pred_var, labels, topk=(1,))[0]
             record['prec5'] = accuracy(pred_var, labels, topk=(5,))[0]
-        record['loss'] = loss_total.numpy()
+        record['loss'] = float(loss_total.numpy()[0])
         # ********************************************************
 
         # ****** BACKPROPAGATE AND APPLY OPTIMIZATION STEP *******

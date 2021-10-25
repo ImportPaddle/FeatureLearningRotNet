@@ -65,6 +65,12 @@ dloader_test = CifarDataLoader(
     num_workers=args_opt.num_workers,
     shuffle=False)
 
+from tqdm import tqdm
+# for idx, batch in enumerate(tqdm(dloader_train(0))):
+#         # print(label)
+#         print(batch)
+#         pass
+
 config['disp_step'] = args_opt.disp_step
 algorithm = getattr(alg, config['algorithm_type'])(config)
 if args_opt.cuda:  # enable cuda

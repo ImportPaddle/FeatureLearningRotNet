@@ -75,7 +75,7 @@ class ClassificationModel(Algorithm):
         self.tensors['labels']=batch[1]
         dataX = self.tensors['dataX']
         labels = self.tensors['labels']
-
+        
         dataX=dataX
         labels=labels
 
@@ -90,8 +90,11 @@ class ClassificationModel(Algorithm):
 
         #***************** SET TORCH fluid.dygraph.to_variableS ******************
         # dataX_var = torch.autograd.fluid.dygraph.to_variable(dataX, volatile=(not do_train))
-        dataX_var = fluid.dygraph.to_variable(dataX)
-        labels_var = fluid.dygraph.to_variable(labels)
+        # with fluid.dygraph.guard():
+        #     dataX_var = fluid.dygraph.to_variable(dataX)
+        #     labels_var = fluid.dygraph.to_variable(labels)
+        dataX_var=dataX
+        labels_var=labels
         #********************************************************
 
         #************ FORWARD THROUGH NET ***********************
@@ -110,8 +113,10 @@ class ClassificationModel(Algorithm):
         # print(label.shape)
         # print(accuracy(pre, label, topk=(1,))[0])
         record['prec1'] = accuracy(pre, label, topk=(1,))[0]
-        # record['loss'] = loss_total.data
-        record['loss'] = loss_total.numpy()
+        #
+        record['loss'] = float(loss_total.numpy()[0])
+
+        #  record['loss'] = loss_total.data
         # record['prec1'] = accuracy(pre, label, topk=(1,))[0][0]
         # record['loss'] = loss_total.data[0]
         #********************************************************
@@ -126,4 +131,5 @@ class ClassificationModel(Algorithm):
         record['load_time'] = 100*(batch_load_time/total_time)
         record['process_time'] = 100*(batch_process_time/total_time)
 
+        # print(record)
         return record

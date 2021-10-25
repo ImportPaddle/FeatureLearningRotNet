@@ -207,7 +207,7 @@ class Algorithm():
         assert(os.path.isfile(filename))
         if os.path.isfile(filename):
             checkpoint = paddle.load(filename)
-            self.networks[net_key].load_state_dict(checkpoint['network'])
+            self.networks[net_key].set_state_dict(checkpoint['network'])
 
     def load_optimizer(self, net_key, epoch,suffix=''):
         assert(net_key in self.optimizers)
@@ -215,7 +215,7 @@ class Algorithm():
         assert(os.path.isfile(filename))
         if os.path.isfile(filename):
             checkpoint = paddle.load(filename)
-            self.optimizers[net_key].load_state_dict(checkpoint['optimizer'])
+            self.optimizers[net_key].set_state_dict(checkpoint['optimizer'])
 
     def _get_net_checkpoint_filename(self, net_key, epoch):
         return os.path.join(self.exp_dir, net_key+'_net_epoch'+str(epoch))
@@ -261,7 +261,13 @@ class Algorithm():
         disp_step   = self.opt['disp_step'] if ('disp_step' in self.opt) else 50
         train_stats = utils.DAverageMeter()
         self.bnumber = len(data_loader())
+
+        # print(self.bnumber)
+        # for batch in data_loader(epoch):
+        #     print('----')
+
         for idx, batch in enumerate(tqdm(data_loader(epoch))):
+            # print(idx)
             self.biter = idx
             train_stats_this = self.train_step(batch)
             train_stats.update(train_stats_this)
