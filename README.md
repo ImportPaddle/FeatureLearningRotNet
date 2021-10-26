@@ -13,7 +13,7 @@
 | 模型                 | CIFAR10 Top1 acc |
 | -------------------- | ---------------- |
 | RotNet+conv(pytorch) | 91.16            |
-| paddle               | 91.6238          |
+| RotNet+conv(paddle)  | 91.6238          |
 
 
 
