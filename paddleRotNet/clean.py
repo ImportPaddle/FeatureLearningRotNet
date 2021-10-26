@@ -10,14 +10,16 @@ def deleteNouese(path):#遍历指定文件夹中所有文件，检查图像大�
             postfix=file.rsplit('.',1)[-1]
             # print(file.rsplit('.',1))
             if postfix=='py':
-                flag=os.path.exists(os.path.join(root,'__pycache__',name+'.cpython-38.pyc'))
+                pycPath=os.path.join(root,'__pycache__',name+'.cpython-38.pyc')
+                flag=os.path.exists(pycPath)
                 # print(name+'.cpython-38.pyc')
                 if flag:
                     print('save ',os.path.join(root,'__pycache__',name+'.cpython-38.pyc'))
                     pass
                 else:
-                    path=os.path.join(root,name)
-                    print('delete {}'.format(path))
+                    pypath=os.path.join(root,file)
+                    print('delete {}'.format(pypath))
+                    print('delete {}'.format(pycPath))
                     # print(file+' '+(name+'.cpython-38.pyc'))
             # print(os.path.join(root,name))
             # aa1=os.path.join(root,name)

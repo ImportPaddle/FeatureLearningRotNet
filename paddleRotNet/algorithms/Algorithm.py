@@ -108,26 +108,36 @@ class Algorithm():
 
     def init_all_optimizers(self):
         self.optimizers = {}
-
         for key, oparams in self.optim_params.items():
             self.optimizers[key] = None
             if oparams != None:
                 self.optimizers[key] = self.init_optimizer(
                         self.networks[key], oparams, key)
+                assert(self.optimizers[key]!=None)
 
     def init_optimizer(self, net, optim_opts, key):
         optim_type = optim_opts['optim_type']
         learning_rate = optim_opts['lr']
         optimizer = None
-        parameters = filter(lambda p: p.trainable==True, net.parameters())
+        # parameters = filter(lambda p: p.trainable==True, net.parameters())
+        # print(list(parameters))
+        parameters=net.parameters()
+        # print('len(parameters)',len(parameters))
         self.logger.info('Initialize optimizer: %s with params: %s for netwotk: %s'
             % (optim_type, optim_opts, key))
         if optim_type == 'adam':
             optimizer = Adam(parameters=parameters, learning_rate=learning_rate,
                         beta1=optim_opts['beta'])
         elif optim_type == 'sgd':
-            optimizer = SGD(parameters=parameters, learning_rate=learning_rate
-                            ,weight_decay=optim_opts['weight_decay'])
+                optimizer = paddle.optimizer.Momentum(parameters=parameters,
+                                                 learning_rate=learning_rate,
+                                                 momentum=optim_opts['momentum'],
+                                                 use_nesterov=optim_opts['nesterov'] if (
+                                                         'nesterov' in optim_opts) else False,
+                                                 weight_decay=optim_opts['weight_decay'])
+                # optimizer = paddle.optim.SGD(parameters, lr=learning_rate, momentum=0.9, weight_decay=5e-4)
+            # optimizer = SGD(parameters=parameters, learning_rate=learning_rate
+            #                 ,weight_decay=optim_opts['weight_decay'])
                 # momentum=optim_opts['momentum'],
                 # nesterov=optim_opts['nesterov'] if ('nesterov' in optim_opts) else False,
 
@@ -152,11 +162,11 @@ class Algorithm():
         # for key, net in self.networks.items():
         #     self.networks[key] = net
         paddle.set_device('gpu')
-        for key, criterion in self.criterions.items():
-            self.criterions[key] = criterion
+        # for key, criterion in self.criterions.items():
+        #     self.criterions[key] = criterion
 
-        for key, tensor in self.tensors.items():
-            self.tensors[key] = tensor
+        # for key, tensor in self.tensors.items():
+        #     self.tensors[key] = tensor
 
     def save_checkpoint(self, epoch, suffix=''):
         for key, net in self.networks.items():
@@ -168,6 +178,7 @@ class Algorithm():
         self.logger.info('Load checkpoint of epoch %d' % (epoch))
 
         for key, net in self.networks.items(): # Load networks
+            print(key)
             if self.optim_params[key] == None: continue
             self.load_network(key, epoch,suffix)
 
@@ -204,6 +215,7 @@ class Algorithm():
     def load_network(self, net_key, epoch,suffix=''):
         assert(net_key in self.networks)
         filename = self._get_net_checkpoint_filename(net_key, epoch)+suffix
+        print(filename)
         assert(os.path.isfile(filename))
         if os.path.isfile(filename):
             checkpoint = paddle.load(filename)
@@ -308,9 +320,15 @@ class Algorithm():
             LUT = oparams['LUT_lr']
             lr = next((lr for (max_epoch, lr) in LUT if max_epoch>epoch), LUT[-1][1])
             self.logger.info('==> Set to %s optimizer lr = %.10f' % (key, lr))
+            # print(self.optimizers[key])
+            # print(len(self.optimizers[key]))
             # for param_group in self.optimizers[key].param_groups:
             #     param_group['lr'] = lr
-            self.optimizers[key]._learning_rate = lr
+            # self.optimizers[key]._learning_rate = lr
+            # for param_group in self.optimizers[key].param_groups:
+            #     param_group['lr'] = lr
+            self.optimizers[key].set_lr(lr)
+            print(self.optimizers[key]._learning_rate)
 
     def init_record_of_best_model(self):
         self.max_metric_val = None

@@ -64,10 +64,10 @@ class FeatureClassificationModel(Algorithm):
         #********************************************************
 
         #***************** SET TORCH VARIABLES ******************
-        dataX_var = Variable(dataX, volatile=((not do_train) or (not finetune_feat_extractor)))
+        dataX_var = Variable(dataX,=((not do_train) or (not finetune_feat_extractor)))
         labels_var = Variable(labels, requires_grad=False)
         #********************************************************
-
+ volatile
         #************ FORWARD PROPAGATION ***********************
         feat_var = self.networks['feat_extractor'](dataX_var, out_feat_keys=out_feat_keys)
         if not finetune_feat_extractor:

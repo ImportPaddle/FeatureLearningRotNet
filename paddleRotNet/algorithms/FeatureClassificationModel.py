@@ -7,10 +7,10 @@ from . import Algorithm
 from pdb import set_trace as breakpoint
 
 # from paddleRotNet.algorithms import Algorithm
-SEED=100
-torch.manual_seed(SEED)
-paddle.seed(SEED)
-np.random.seed(SEED)
+# SEED=100
+# torch.manual_seed(SEED)
+# paddle.seed(SEED)
+# np.random.seed(SEED)
 
 def accuracy(output, target, topk=(1,),flag='paddle'):
     """Computes the precision@k for the specified values of k"""
@@ -24,11 +24,9 @@ def accuracy(output, target, topk=(1,),flag='paddle'):
 
         correct = pred.eq(target.view(1, -1).expand_as(pred))
         # print(correct)
-        print('------')
         res = []
         for k in topk:
             correct_k = correct[:k].view(-1).float().sum(0)
-
             res.append(correct_k.mul_(100.0 / batch_size))
         return np.array([ele.data.cpu().numpy() for ele in res])
     elif flag=='paddle':
@@ -45,8 +43,7 @@ def accuracy(output, target, topk=(1,),flag='paddle'):
         res = []
         for k in topk:
             correct_k = paddle.reshape(correct[:k],[-1]).numpy()
-            correct_k=correct_k.sum(0)
-            
+            correct_k=correct_k.sum(0) 
             res.append((correct_k*100.0)/ batch_size)
         return np.array(res)
 class FeatureClassificationModel(Algorithm):
@@ -82,7 +79,13 @@ class FeatureClassificationModel(Algorithm):
         # ********************************************************
         start = time.time()
         out_feat_keys = self.out_feat_keys
-        finetune_feat_extractor = self.optimizers['feat_extractor'] is not None
+        finetune_feat_extractor=None
+        try:
+            finetune_feat_extractor = self.optimizers['feat_extractor'] is not None
+        except:
+            # print('not finetune_feat_extractor ')
+            pass
+
         if do_train:  # zero the gradients
             self.optimizers['classifier'].clear_grad()
             if finetune_feat_extractor:
@@ -94,10 +97,10 @@ class FeatureClassificationModel(Algorithm):
         # ***************** SET TORCH fluid.dygraph.to_variableS ******************
         import paddle.fluid as fluid
         import numpy as np
-        with fluid.dygraph.guard():
-            dataX_var = fluid.dygraph.to_variable(dataX)
+        # with fluid.dygraph.guard():
+        dataX_var = dataX
             # dataX_var = fluid.dygraph.to_variable(dataX, volatile=((not do_train) or (not finetune_feat_extractor)))
-            labels_var = fluid.dygraph.to_variable(labels)
+        labels_var = labels
             # labels_var = fluid.dygraph.to_fluid.dygraph.to_variable(labels, requires_grad=False)
         # ********************************************************
 

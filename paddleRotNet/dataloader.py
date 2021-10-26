@@ -16,7 +16,7 @@ from paddle.io import DataLoader
 
 import warnings
 warnings.filterwarnings('ignore')
-BATCH_SIZE = 8
+BATCH_SIZE = 128
 _CIFAR_DATASET_DIR = './datasets/CIFAR'
 
 

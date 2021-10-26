@@ -70,14 +70,15 @@ class ClassificationModel(Algorithm):
 
     def process_batch(self, batch, do_train=True):
         #*************** LOAD BATCH (AND MOVE IT TO GPU) ********
+        # with fluid.dygraph.guard():
         start = time.time()
         self.tensors['dataX']=batch[0]
         self.tensors['labels']=batch[1]
         dataX = self.tensors['dataX']
         labels = self.tensors['labels']
         
-        dataX=dataX
-        labels=labels
+        
+        
 
         batch_load_time = time.time() - start
         #********************************************************
@@ -94,7 +95,7 @@ class ClassificationModel(Algorithm):
         #     dataX_var = fluid.dygraph.to_variable(dataX)
         #     labels_var = fluid.dygraph.to_variable(labels)
         dataX_var=dataX
-        labels_var=labels
+        labels_var =labels
         #********************************************************
 
         #************ FORWARD THROUGH NET ***********************
@@ -124,6 +125,8 @@ class ClassificationModel(Algorithm):
         #****** BACKPROPAGATE AND APPLY OPTIMIZATION STEP *******
         if do_train:
             loss_total.backward()
+            # print(loss_total)
+            # print(pre.shape)
             self.optimizers['model'].step()
         #********************************************************
         batch_process_time = time.time() - start

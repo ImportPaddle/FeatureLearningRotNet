@@ -137,8 +137,8 @@ def main():
 
 def check():
     diff_helper = ReprodDiffHelper()
-    info1 = diff_helper.load_info("./net_pytorch.npy")
-    info2 = diff_helper.load_info("./net_paddle.npy")
+    info1 = diff_helper.load_info("./back_pytorch.npy")
+    info2 = diff_helper.load_info("./back_paddle.npy")
 
     diff_helper.compare_info(info1, info2)
     diff_helper.report(

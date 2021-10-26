@@ -1,90 +1,71 @@
 训练：
+
 运行sh run_cifar10_based_unsupervised_experiments.sh
 
-1.模型对齐 yes
-
-Torch -> Paddle 
-
-坑：nn.AvgPool2D(exclusive=False,kernel_size=3, stride=2, padding=1）
-
-exclusive=False
-
-paddle默认与torch相反
-
-运行check/forwordCheck/check.py
-
-diff:
-
-ext1: 5.027723304351639e-08
-
-fla1: 1.1689111545365449e-07
+- [x] 模型对齐
+- [x] loss对齐
+- [x] 评估指标对齐
+- [x] 反向对齐
+- [x] 训练对齐
 
 
 
-2.loss对齐 yes
+训练：
 
-运行check/forwordCheck/check.py
+RotNet_NIN4blocks训练：
 
-diff: 0.0
-
-3.评估指标对齐 yes
-
-运行check/accCheck/check.py
-
-diff: 0.0
+*CUDA_VISIBLE_DEVICES=0 python main.py --exp=CIFAR10_RotNet_NIN4blocks*
 
 
 
-4.反向对齐 yes
-运行check/forwordCheck/check.py
-diff
-loss1:4.76837158203125e-07
-loss2:2.384185791015625e-07
+ConvClassifier训练：
 
-5.训练对齐
-运行check/trainCheck/check.py
-
-
-问题1: 
-已接近
-
-
-torch.optimizer.SGD(parameters=parameters,lr=learning_rate,
+CUDA_VISIBLE_DEVICES=0 python main.py --exp=CIFAR10_ConvClassifier_on_RotNet_NIN4blocks_Conv2_feats
 
 
 
-​                momentum=optim_opts['momentum'],
+训练日志与训练模型
+
+classifier_net_epoch92 放在./experiments/CIFAR10_ConvClassifier_on_RotNet_NIN4blocks_Conv2_feats
+
+model_net_epoch102 放在./experiments/CIFAR10_RotNet_NIN4blocks
+
+model_opt_epoch102 放在./experiments/CIFAR10_RotNet_NIN4blocks
 
 
 
-​                nesterov=optim_opts['nesterov'] if ('nesterov' in optim_opts) else False,
+[百度网盘](https://pan.baidu.com/s/1tPqxjbO6E3gWlcOMpqa02w)
+
+提取码：k1gf
 
 
 
-​                weight_decay=optim_opts['weight_decay'])
+评估：
+
+CUDA_VISIBLE_DEVICES=0 python main.py --exp=CIFAR10_ConvClassifier_on_RotNet_NIN4blocks_Conv2_feats --evaluate --checkpoint=92
 
 
 
-paddle无momentum和nesterov超参数
+模型精度：
+
+| 模型                 | CIFAR10 Top1 acc |
+| -------------------- | ---------------- |
+| RotNet+conv(pytorch) | 91.16            |
+| paddle               | 91.6238          |
 
 
 
+
+
+问题1: 已解决
 说明：PaddlePaddle的SGD不支持动量更新、动量衰减和Nesterov动量，这里需要使用paddle.optimizer.Momentum API实现这些功能。
 
-
-
-paddle.optimizer.Momentum(parameters=parameters,lr=learning_rate,
-
-
-
-​                momentum=optim_opts['momentum'],
-
-
-
-​                nesterov=optim_opts['nesterov'] if ('nesterov' in optim_opts) else False,
-
-
-
-​                weight_decay=optim_opts['weight_decay'])
-
+```python
+optimizer = paddle.optimizer.Momentum(parameters=parameters,
+                                                 learning_rate=learning_rate,
+                                                 momentum=optim_opts['momentum'],
+                                                 use_nesterov=optim_opts['nesterov'] if (
+                                                         'nesterov' in optim_opts) else False,
+                                                 weight_decay=optim_opts['weight_decay'])
+```
 

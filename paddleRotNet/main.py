@@ -65,7 +65,7 @@ dloader_test = CifarDataLoader(
     num_workers=args_opt.num_workers,
     shuffle=False)
 
-from tqdm import tqdm
+# from tqdm import tqdm
 # for idx, batch in enumerate(tqdm(dloader_train(0))):
 #         # print(label)
 #         print(batch)

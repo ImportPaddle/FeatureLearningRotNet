@@ -75,8 +75,7 @@ def main():
     criterion_paddle = paddle.nn.CrossEntropyLoss()
     # ----------------------------------------优化器----------------------------------------
 
-    optim_params = {'optim_type': 'sgd', 'lr': 0.1, 'momentum': 0.9, 'weight_decay': 5e-4, 'nesterov': True,
-                    'LUT_lr': [(35, 0.1), (70, 0.02), (85, 0.004), (100, 0.0008)]}
+    optim_params = {'optim_type': 'sgd', 'lr': 0.1, 'momentum':0.9, 'weight_decay': 5e-4, 'nesterov': True, 'LUT_lr':[(60, 0.1),(120, 0.02),(160, 0.004),(200, 0.0008)]}
 
     optim_cla_torch = torch.optim.SGD(params=model_cla_pytorch.parameters(), lr=optim_params['lr'],
                                       momentum=optim_params['momentum'],

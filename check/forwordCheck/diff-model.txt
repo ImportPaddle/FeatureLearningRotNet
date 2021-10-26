@@ -1,9 +1,5 @@
-[2021/10/24 19:19:36] root INFO: model_ext1: 
-[2021/10/24 19:19:36] root INFO: 	mean diff: check passed: True, value: 5.027723304351639e-08
-[2021/10/24 19:19:36] root INFO: model_ext2: 
-[2021/10/24 19:19:36] root INFO: 	mean diff: check passed: True, value: 5.00680350512539e-08
-[2021/10/24 19:19:36] root INFO: model_cla1: 
-[2021/10/24 19:19:36] root INFO: 	mean diff: check passed: True, value: 1.1689111545365449e-07
-[2021/10/24 19:19:36] root INFO: model_cla2: 
-[2021/10/24 19:19:36] root INFO: 	mean diff: check passed: True, value: 1.1558309154224844e-07
-[2021/10/24 19:19:36] root INFO: diff check passed
+[2021/10/25 21:37:16] root INFO: model_ext1: 
+[2021/10/25 21:37:16] root INFO: 	mean diff: check passed: True, value: 5.027723304351639e-08
+[2021/10/25 21:37:16] root INFO: model_cla1: 
+[2021/10/25 21:37:16] root INFO: 	mean diff: check passed: True, value: 1.1689111545365449e-07
+[2021/10/25 21:37:16] root INFO: diff check passed

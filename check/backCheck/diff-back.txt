@@ -1,5 +1,5 @@
-[2021/10/24 19:22:55] root INFO: model_loss1: 
-[2021/10/24 19:22:55] root INFO: 	mean diff: check passed: True, value: 4.76837158203125e-07
-[2021/10/24 19:22:55] root INFO: model_loss2: 
-[2021/10/24 19:22:55] root INFO: 	mean diff: check passed: True, value: 2.384185791015625e-07
-[2021/10/24 19:22:55] root INFO: diff check passed
+[2021/10/26 09:08:37] root INFO: model_loss1: 
+[2021/10/26 09:08:37] root INFO: 	mean diff: check passed: True, value: 4.76837158203125e-07
+[2021/10/26 09:08:37] root INFO: model_loss2: 
+[2021/10/26 09:08:37] root INFO: 	mean diff: check passed: True, value: 2.384185791015625e-07
+[2021/10/26 09:08:37] root INFO: diff check passed
